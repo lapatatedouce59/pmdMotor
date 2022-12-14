@@ -184,6 +184,16 @@ SOUND_MANAGER.context = new AudioContext();
     SOUND_MANAGER.registerSound("defu", 'sounds/fu/de-fu.mp3');
     SOUND_MANAGER.registerSound("fu", 'sounds/fu/fu-propre.mp3');
     SOUND_MANAGER.registerSound("accel", 'sounds/accels-deccels/accel-0-80.mp3')
+    SOUND_MANAGER.registerSound("5kmh", 'sounds/steady/5kmh-steady.mp3')
+    SOUND_MANAGER.registerSound("20kmh", 'sounds/steady/20kmh-steady.mp3')
+    SOUND_MANAGER.registerSound("30kmh", 'sounds/steady/30kmh-steady.mp3')
+    SOUND_MANAGER.registerSound("40kmh", 'sounds/steady/40kmh-steady.mp3')
+    SOUND_MANAGER.registerSound("45kmh", 'sounds/steady/45kmh-steady.mp3')
+    SOUND_MANAGER.registerSound("50kmh", 'sounds/steady/50kmh-steady.mp3')
+    SOUND_MANAGER.registerSound("55kmh", 'sounds/steady/55kmh-steady.mp3')
+    SOUND_MANAGER.registerSound("60kmh", 'sounds/steady/60kmh-steady.mp3')
+    SOUND_MANAGER.registerSound("70kmh", 'sounds/steady/70kmh-steady.mp3')
+    SOUND_MANAGER.registerSound("80kmh", 'sounds/steady/80kmh-steady.mp3')
     requestAnimationFrame(up);
 })();
 
@@ -256,6 +266,66 @@ function update(){
         STATES[0]=false
         SOUND_MANAGER.playSound('fu');
         SOUND_MANAGER.stopSound('defu');
+    }
+
+    if(currentSpeed >0 && currentSpeed <=10 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('5kmh')
+    } else {
+        SOUND_MANAGER.stopSound('5kmh')
+    }
+
+    if(currentSpeed >10 && currentSpeed <=25 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('20kmh')
+    } else {
+        SOUND_MANAGER.stopSound('20kmh')
+    }
+
+    if(currentSpeed >25 && currentSpeed <=35 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('30kmh')
+    } else {
+        SOUND_MANAGER.stopSound('30kmh')
+    }
+
+    if(currentSpeed >35 && currentSpeed <=42 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('40kmh')
+    } else {
+        SOUND_MANAGER.stopSound('40kmh')
+    }
+
+    if(currentSpeed >42 && currentSpeed <=47 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('45kmh')
+    } else {
+        SOUND_MANAGER.stopSound('45kmh')
+    }
+
+    if(currentSpeed >47 && currentSpeed <=52 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('50kmh')
+    } else {
+        SOUND_MANAGER.stopSound('50kmh')
+    }
+
+    if(currentSpeed >52 && currentSpeed <=57 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('55kmh')
+    } else {
+        SOUND_MANAGER.stopSound('55kmh')
+    }
+
+    if(currentSpeed >57 && currentSpeed <=68 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('60kmh')
+    } else {
+        SOUND_MANAGER.stopSound('60kmh')
+    }
+
+    if(currentSpeed >68 && currentSpeed <=78 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('70kmh')
+    } else {
+        SOUND_MANAGER.stopSound('70kmh')
+    }
+
+    if(currentSpeed >78 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('80kmh')
+    } else {
+        SOUND_MANAGER.stopSound('80kmh')
     }
 
     
