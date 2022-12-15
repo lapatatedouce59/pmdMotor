@@ -9,4 +9,4 @@ Les prochaines versions prévoient d'utiliser un son constant pitché au fur et 
 
 
 
-<img src="https://img.shields.io/youtube/channel/subscribers/UChuAsEQaHg7-uqm4su6qv9g?style=social"> 
+Chaine Youtube oficielle du jeu: <img src="https://img.shields.io/youtube/channel/subscribers/UChuAsEQaHg7-uqm4su6qv9g?style=social"> 
