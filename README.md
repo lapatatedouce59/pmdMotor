@@ -10,7 +10,7 @@ Les prochaines versions prévoient d'utiliser un son constant pitché au fur et 
 ### FEATURES:
 > 🟥 Sons d'accélérations selon les vitesses <br>
 > 🟥 Sons d'accélération constant et linéaire (un seul sample pitché) <br>
-> 🟨 Sons de FU selon la vitesse <br>
+> 🟩 Sons de FU selon la vitesse <br>
 > 🟥 Sons de freinage selon la vitesse <br>
 > 🟩 Sons de rame steady <br>
 
