@@ -176,15 +176,22 @@ SOUND_MANAGER.context = new AudioContext();
 
 
 (()=>{
-    /*let pre = 'assets/sounds/mp05/synth/';
-    SOUND_MANAGER.registerSound("p0", pre+'frottements.mp3');
-    SOUND_MANAGER.registerSound("p1", pre+'demarrage.mp3');
-    SOUND_MANAGER.registerSound("p2", pre+'moteur.mp3');
-    SOUND_MANAGER.registerSound("p3", pre+'grincements.mp3');*/
+
     SOUND_MANAGER.registerSound("defu", 'sounds/fu/de-fu.mp3');
     SOUND_MANAGER.registerSound("fu", 'sounds/fu/fu-propre.mp3');
+    SOUND_MANAGER.registerSound("fu80", 'sounds/fu/80kmh-fu.mp3');
+    SOUND_MANAGER.registerSound("fu70", 'sounds/fu/fu-70kmh.mp3');
+    SOUND_MANAGER.registerSound("fu60", 'sounds/fu/fu-60kmh.mp3');
+    SOUND_MANAGER.registerSound("fu50", 'sounds/fu/fu-50kmh.mp3');
+    SOUND_MANAGER.registerSound("fu30", 'sounds/fu/fu-30kmh.mp3');
+    SOUND_MANAGER.registerSound("fu20", 'sounds/fu/fu-20kmh.mp3');
+    SOUND_MANAGER.registerSound("fu3", 'sounds/fu/fu3.mp3');
+
     SOUND_MANAGER.registerSound("accel", 'sounds/accels-deccels/accel-0-80.mp3')
-    SOUND_MANAGER.registerSound("5kmh", 'sounds/steady/5kmh-steady.mp3')
+
+    SOUND_MANAGER.registerSound("5kmh", 'sounds/steady/3kmh.mp3')
+    SOUND_MANAGER.registerSound("10kmh", 'sounds/steady/10kmh.mp3')
+    SOUND_MANAGER.registerSound("15kmh", 'sounds/steady/15kmh.mp3')
     SOUND_MANAGER.registerSound("20kmh", 'sounds/steady/20kmh-steady.mp3')
     SOUND_MANAGER.registerSound("30kmh", 'sounds/steady/30kmh-steady.mp3')
     SOUND_MANAGER.registerSound("40kmh", 'sounds/steady/40kmh-steady.mp3')
@@ -198,7 +205,7 @@ SOUND_MANAGER.context = new AudioContext();
 })();
 
 
-const STATES = [false, false, false, false] //FU ; DEFU
+const STATES = [false, false, false, false] //DEFU ; FU
 let currentSpeed = 0;
 let currentThrottle = 0;
 let throttleDisplay = document.querySelector("#throttle-status");
@@ -239,7 +246,7 @@ function update(){
 
     if(currentThrottle === -6){
         throttleDisplay.innerHTML = "FU";
-        currentSpeed += ((currentThrottle / 20) * delta);
+        currentSpeed += ((currentThrottle / 25) * delta);
         if(currentSpeed > maxSpeed) currentSpeed = maxSpeed;
         if(currentSpeed < 0) currentSpeed = 0;
         speedDisplay.innerHTML = currentSpeed.toFixed(1);
@@ -255,26 +262,43 @@ function update(){
     //SOUND HANDLING
 
     //DEFU
-    if(currentSpeed > 0 && !STATES[0]){
+    if(currentSpeed > 0 && currentThrottle > 0 && currentSpeed < 1 && !STATES[0]){
         STATES[0]=true
         STATES[1]=false
+        STATES[2]=false
         SOUND_MANAGER.playSound('defu');
         SOUND_MANAGER.stopSound('fu');
     }
-    if(currentSpeed <= 0 && !STATES[1]){
+    //FU
+    if(currentSpeed <= 0 && !STATES[1] && STATES[0] && currentThrottle < 0){
         STATES[1]=true
         STATES[0]=false
         SOUND_MANAGER.playSound('fu');
         SOUND_MANAGER.stopSound('defu');
     }
 
-    if(currentSpeed >0 && currentSpeed <=10 && currentThrottle===0){
+
+
+    //STEADY
+    if(currentSpeed >0 && currentSpeed <=7 && currentThrottle===0){
         SOUND_MANAGER.loopSound('5kmh')
     } else {
         SOUND_MANAGER.stopSound('5kmh')
     }
 
-    if(currentSpeed >10 && currentSpeed <=25 && currentThrottle===0){
+    if(currentSpeed >7 && currentSpeed <=12 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('10kmh')
+    } else {
+        SOUND_MANAGER.stopSound('10kmh')
+    }
+
+    if(currentSpeed >12 && currentSpeed <=17 && currentThrottle===0){
+        SOUND_MANAGER.loopSound('15kmh')
+    } else {
+        SOUND_MANAGER.stopSound('15kmh')
+    }
+
+    if(currentSpeed >17 && currentSpeed <=25 && currentThrottle===0){
         SOUND_MANAGER.loopSound('20kmh')
     } else {
         SOUND_MANAGER.stopSound('20kmh')
@@ -328,6 +352,56 @@ function update(){
         SOUND_MANAGER.stopSound('80kmh')
     }
 
+    //FU
+    if(currentSpeed >=78 && currentThrottle===-6 && !STATES[1]){
+        SOUND_MANAGER.playSound('fu80')
+        console.log("iteration")
+        STATES[1]=true
+        STATES[0]=false
+        //console.log(STATES)
+    } else
+    if(currentSpeed <78 && currentSpeed >=68 && currentThrottle===-6 && !STATES[1]){
+        SOUND_MANAGER.playSound('fu70')
+        console.log("iteration")
+        STATES[1]=true
+        STATES[0]=false
+        //console.log(STATES)
+    } else
+    if(currentSpeed <68 && currentSpeed >=58 && currentThrottle===-6 && !STATES[1]){
+        SOUND_MANAGER.playSound('fu60')
+        console.log("iteration")
+        STATES[1]=true
+        STATES[0]=false
+        //console.log(STATES)
+    } else
+    if(currentSpeed <58 && currentSpeed >=42 && currentThrottle===-6 && !STATES[1]){
+        SOUND_MANAGER.playSound('fu50')
+        console.log("iteration")
+        STATES[1]=true
+        STATES[0]=false
+        //console.log(STATES)
+    } else
+    if(currentSpeed <42 && currentSpeed >=28 && currentThrottle===-6 && !STATES[1]){
+        SOUND_MANAGER.playSound('fu30')
+        console.log("iteration")
+        STATES[1]=true
+        STATES[0]=false
+        //console.log(STATES)
+    } else
+    if(currentSpeed <28 && currentSpeed >=10 && currentThrottle===-6 && !STATES[1]){
+        SOUND_MANAGER.playSound('fu20')
+        console.log("iteration")
+        STATES[1]=true
+        STATES[0]=false
+        //console.log(STATES)
+    } else
+    if(currentSpeed <10 && currentThrottle===-6 && !STATES[1]){
+        SOUND_MANAGER.playSound('fu3')
+        console.log("iteration")
+        STATES[1]=true
+        STATES[0]=false
+        //console.log(STATES)
+    }
     
 
     /*const activation_treshold = 12;
