@@ -269,20 +269,41 @@ function update(){
 
     //SOUND HANDLING
 
-    //DEFU
-    if(currentSpeed > 0 && currentThrottle > 0 && currentSpeed < 1 && !STATES[0]){
+    function applyNormalFu(){
+        STATES[1]=true
+        STATES[0]=false
+        SOUND_MANAGER.playSound({id: 'fu'});
+        SOUND_MANAGER.stopSound('defu');
+    }
+
+    function disableNormalFu(){
         STATES[0]=true
         STATES[1]=false
         STATES[2]=false
         SOUND_MANAGER.playSound({id: 'defu'});
         SOUND_MANAGER.stopSound('fu');
     }
+
+    function stopAllFu(){
+        SOUND_MANAGER.stopSound('fu80')
+        SOUND_MANAGER.stopSound('fu70')
+        SOUND_MANAGER.stopSound('fu60')
+        SOUND_MANAGER.stopSound('fu50')
+        SOUND_MANAGER.stopSound('fu30')
+        SOUND_MANAGER.stopSound('fu20')
+        SOUND_MANAGER.stopSound('fu3')
+    }
+
+    //DEFU
+    if(currentSpeed > 0 && currentThrottle > 0 && currentSpeed < 1 && !STATES[0]){
+        disableNormalFu()
+    } else if (currentSpeed > 0 && currentThrottle > 0 && STATES[1] && !STATES[0]){
+        disableNormalFu()
+        stopAllFu()
+    }
     //FU
     if(currentSpeed <= 0 && !STATES[1] && STATES[0] && currentThrottle < 0){
-        STATES[1]=true
-        STATES[0]=false
-        SOUND_MANAGER.playSound({id: 'fu'});
-        SOUND_MANAGER.stopSound('defu');
+        applyNormalFu()
     }
 
 
@@ -361,55 +382,60 @@ function update(){
     }
 
     //FU
-    if(currentSpeed >=78 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound({id: 'fu80'})
-        console.log("iteration")
-        STATES[1]=true
-        STATES[0]=false
-        //console.log(STATES)
-    } else
-    if(currentSpeed <78 && currentSpeed >=68 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound({id: 'fu70'})
-        console.log("iteration")
-        STATES[1]=true
-        STATES[0]=false
-        //console.log(STATES)
-    } else
-    if(currentSpeed <68 && currentSpeed >=58 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound({id: 'fu60'})
-        console.log("iteration")
-        STATES[1]=true
-        STATES[0]=false
-        //console.log(STATES)
-    } else
-    if(currentSpeed <58 && currentSpeed >=42 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound({id: 'fu50'})
-        console.log("iteration")
-        STATES[1]=true
-        STATES[0]=false
-        //console.log(STATES)
-    } else
-    if(currentSpeed <42 && currentSpeed >=28 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound({id: 'fu30'})
-        console.log("iteration")
-        STATES[1]=true
-        STATES[0]=false
-        //console.log(STATES)
-    } else
-    if(currentSpeed <28 && currentSpeed >=10 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound({id: 'fu20'})
-        console.log("iteration")
-        STATES[1]=true
-        STATES[0]=false
-        //console.log(STATES)
-    } else
-    if(currentSpeed <10 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound({id: 'fu3'})
-        console.log("iteration")
-        STATES[1]=true
-        STATES[0]=false
-        //console.log(STATES)
+    if(!STATES[1]){
+        if(currentSpeed >=78 && currentThrottle===-6){
+            SOUND_MANAGER.playSound({id: 'fu80'})
+            console.log("iteration")
+            STATES[1]=true
+            STATES[0]=false
+            //console.log(STATES)
+        } else
+        if(currentSpeed <78 && currentSpeed >=68 && currentThrottle===-6){
+            SOUND_MANAGER.playSound({id: 'fu70'})
+            console.log("iteration")
+            STATES[1]=true
+            STATES[0]=false
+            //console.log(STATES)
+        } else
+        if(currentSpeed <68 && currentSpeed >=58 && currentThrottle===-6){
+            SOUND_MANAGER.playSound({id: 'fu60'})
+            console.log("iteration")
+            STATES[1]=true
+            STATES[0]=false
+            //console.log(STATES)
+        } else
+        if(currentSpeed <58 && currentSpeed >=42 && currentThrottle===-6){
+            SOUND_MANAGER.playSound({id: 'fu50'})
+            console.log("iteration")
+            STATES[1]=true
+            STATES[0]=false
+            //console.log(STATES)
+        } else
+        if(currentSpeed <42 && currentSpeed >=28 && currentThrottle===-6){
+            SOUND_MANAGER.playSound({id: 'fu30'})
+            console.log("iteration")
+            STATES[1]=true
+            STATES[0]=false
+            //console.log(STATES)
+        } else
+        if(currentSpeed <28 && currentSpeed >=10 && currentThrottle===-6){
+            SOUND_MANAGER.playSound({id: 'fu20'})
+            console.log("iteration")
+            STATES[1]=true
+            STATES[0]=false
+            //console.log(STATES)
+        } else
+        if(currentSpeed <10 && currentThrottle===-6){
+            SOUND_MANAGER.playSound({id: 'fu3'})
+            console.log("iteration")
+            STATES[1]=true
+            STATES[0]=false
+            //console.log(STATES)
+        }
+    } else if (currentThrottle >0) {
+        
     }
+    
     
 
     /*const activation_treshold = 12;
