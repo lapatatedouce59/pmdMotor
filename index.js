@@ -41,16 +41,17 @@ const SOUND_MANAGER = {
         };
         xhr.send();
     },
-    playSound: function (id, vol = 1, pitch = 1, onend = false, onnearend = false, prespitch=false) { // Returns true if no sound is linked, meaning should retry later
-        let snd = this.sounds[id];
+    //playSound: function (id, vol = 1, pitch = 1, onend = false, onnearend = false, prespitch=false, trim) {
+    playSound: function (params) { // Returns true if no sound is linked, meaning should retry later
+        let snd = this.sounds[params.id];
         if (!snd) {
-            console.error("Attempted to play " + id + ", but no sound is linked !");
+            console.error("Attempted to play " + params.id + ", but no sound is linked !");
             return false;
         }
         let src = this.context.createBufferSource();
         src.buffer = snd;
         // src.playbackRate.value = pitch;
-        this.setPitch(id, src, pitch,prespitch);
+        this.setPitch(params.id, src, (params.pitch || 1), params.prespitch);
 
         // src.connect(this.context.destination);
 
@@ -58,29 +59,36 @@ const SOUND_MANAGER = {
         src.connect(gainNode);
         src.gainNode = gainNode;
         gainNode.connect(this.context.destination);
-        let cstm = this.soundscustomvolume[id] ? this.soundscustomvolume[id] : 1;
-        gainNode.gain.value = this.globalVolume * vol * cstm;
+        let cstm = this.soundscustomvolume[params.id] ? this.soundscustomvolume[params.id] : 1;
+        gainNode.gain.value = this.globalVolume * (params.vol || 1) * cstm;
         // console.log('Gain: '+gainNode.gain.value);
 
 
         let rthis = this;
         src.onended = () => {
-            if (onend && typeof onend == "function") onend();
+            if (params.onend && typeof params.onend == "function") params.onend();
             let c = 0;
-            for (let ad of rthis.audios[id]) {
+            for (let ad of rthis.audios[params.id]) {
                 if (ad === src) {
-                    rthis.audios[id].splice(c, 1);
+                    rthis.audios[params.id].splice(c, 1);
                 }
                 c++;
             }
         }
         src.ontimeupdate = () => {
             if (src.currentTime > (src.buffer.duration - .5)) {
-                if (onnearend) onnearend();
+                if (params.onnearend) onnearend();
             }
         }
-        src.start(0);
-        this.audios[id].push(src);
+
+        if(params.trim){
+            src.start(params.trim)
+        } else {
+            src.start(0)
+        }
+
+        this.audios[params.id].push(src);
+        console.log("played "+params.id)
         return src;
     },
     /**
@@ -151,7 +159,7 @@ const SOUND_MANAGER = {
             return;
         }
         let b = ()=>{
-            this.playSound(id,vol,pitch,b);
+            this.playSound({id: id, vol: vol, pitch: pitch, onend: b});
         }
         b();
     },
@@ -266,14 +274,14 @@ function update(){
         STATES[0]=true
         STATES[1]=false
         STATES[2]=false
-        SOUND_MANAGER.playSound('defu');
+        SOUND_MANAGER.playSound({id: 'defu'});
         SOUND_MANAGER.stopSound('fu');
     }
     //FU
     if(currentSpeed <= 0 && !STATES[1] && STATES[0] && currentThrottle < 0){
         STATES[1]=true
         STATES[0]=false
-        SOUND_MANAGER.playSound('fu');
+        SOUND_MANAGER.playSound({id: 'fu'});
         SOUND_MANAGER.stopSound('defu');
     }
 
@@ -354,49 +362,49 @@ function update(){
 
     //FU
     if(currentSpeed >=78 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound('fu80')
+        SOUND_MANAGER.playSound({id: 'fu80'})
         console.log("iteration")
         STATES[1]=true
         STATES[0]=false
         //console.log(STATES)
     } else
     if(currentSpeed <78 && currentSpeed >=68 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound('fu70')
+        SOUND_MANAGER.playSound({id: 'fu70'})
         console.log("iteration")
         STATES[1]=true
         STATES[0]=false
         //console.log(STATES)
     } else
     if(currentSpeed <68 && currentSpeed >=58 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound('fu60')
+        SOUND_MANAGER.playSound({id: 'fu60'})
         console.log("iteration")
         STATES[1]=true
         STATES[0]=false
         //console.log(STATES)
     } else
     if(currentSpeed <58 && currentSpeed >=42 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound('fu50')
+        SOUND_MANAGER.playSound({id: 'fu50'})
         console.log("iteration")
         STATES[1]=true
         STATES[0]=false
         //console.log(STATES)
     } else
     if(currentSpeed <42 && currentSpeed >=28 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound('fu30')
+        SOUND_MANAGER.playSound({id: 'fu30'})
         console.log("iteration")
         STATES[1]=true
         STATES[0]=false
         //console.log(STATES)
     } else
     if(currentSpeed <28 && currentSpeed >=10 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound('fu20')
+        SOUND_MANAGER.playSound({id: 'fu20'})
         console.log("iteration")
         STATES[1]=true
         STATES[0]=false
         //console.log(STATES)
     } else
     if(currentSpeed <10 && currentThrottle===-6 && !STATES[1]){
-        SOUND_MANAGER.playSound('fu3')
+        SOUND_MANAGER.playSound({id: 'fu3'})
         console.log("iteration")
         STATES[1]=true
         STATES[0]=false
