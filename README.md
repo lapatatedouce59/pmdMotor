@@ -14,6 +14,6 @@ Les prochaines versions prévoient d'utiliser un son constant pitché au fur et 
 > 🟥 Sons de freinage selon la vitesse <br>
 > 🟩 Sons de rame steady <br>
 
-
+URL de la page de test: https://pmdapp.fr/motor/
 
 Chaine Youtube oficielle du jeu: <a href="https://www.youtube.com/@ParisMetroDriver"><img src="https://img.shields.io/youtube/channel/subscribers/UChuAsEQaHg7-uqm4su6qv9g?style=social"></a>

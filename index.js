@@ -82,7 +82,7 @@ const SOUND_MANAGER = {
         }
 
         if(params.trim){
-            src.start(params.trim)
+            src.start(0, params.trim)
         } else {
             src.start(0)
         }
@@ -209,11 +209,24 @@ SOUND_MANAGER.context = new AudioContext();
     SOUND_MANAGER.registerSound("60kmh", 'sounds/steady/60kmh-steady.mp3')
     SOUND_MANAGER.registerSound("70kmh", 'sounds/steady/70kmh-steady.mp3')
     SOUND_MANAGER.registerSound("80kmh", 'sounds/steady/80kmh-steady.mp3')
+
+    SOUND_MANAGER.registerSound("accel080", 'sounds/accels-deccels/accel-0-80.mp3')
+
+    SOUND_MANAGER.registerSound("doorsOpen", 'sounds/portes/ouverture-portes.mp3')
+    SOUND_MANAGER.registerSound("doorsClose", 'sounds/portes/fermeture-portes.mp3')
+    SOUND_MANAGER.registerSound("ronfleur", 'sounds/portes/ronfleur.mp3')
+    SOUND_MANAGER.registerSound("verr", 'sounds/portes/verouilleur.mp3')
     requestAnimationFrame(up);
 })();
 
+let openBtn = document.getElementById('open');
+let closeBtn = document.getElementById('close');
+let fuBtn = document.getElementById('fu');
 
-const STATES = [false, false, false, false] //DEFU ; FU
+
+
+
+const STATES = [false, false, false, false] //DEFU ; FU ; ACCEL
 let currentSpeed = 0;
 let currentThrottle = 0;
 let throttleDisplay = document.querySelector("#throttle-status");
@@ -223,7 +236,42 @@ let delta = 1;
 let lastUpdate = Date.now();
 let max_tps = 50.0;
 const maxSpeed = 80;
+let trimTreshold = 0
+let pitchOffset = 0
+let doorsState = false
+let closingState= false
+let canStart = true
 
+function openDoors(){
+    if(doorsState) return;
+    SOUND_MANAGER.playSound({id: 'doorsOpen'})
+    doorsState=true
+    closingState=false
+    canStart=false
+    if(currentSpeed>0){
+        instantFu()
+    }
+}
+
+function closeDoors(){
+    if(!closingState && doorsState){
+        SOUND_MANAGER.loopSound('ronfleur')
+        closingState=true
+    } else if (closingState && doorsState){
+        SOUND_MANAGER.playSound({id: 'doorsClose'})
+        doorsState=false
+        SOUND_MANAGER.stopSound('ronfleur')
+    } else if (closingState && !doorsState){
+        SOUND_MANAGER.playSound({id:'verr'})
+        canStart=true
+    }
+
+}
+
+function instantFu(){
+    console.log('fu')
+    rangeInput.value=-6
+}
 
 up()
 
@@ -232,7 +280,15 @@ function up(){
     requestAnimationFrame(up);
 }
 
+
 function update(){
+    openBtn.addEventListener('click', openDoors)
+    closeBtn.addEventListener('click', closeDoors)
+    fuBtn.addEventListener('click', instantFu)
+
+
+    pitchOffset = currentThrottle/5
+    trimTreshold=(currentSpeed/maxSpeed)*21
     console.log(currentThrottle)
     let rn = Date.now();
     let inter = rn - lastUpdate;
@@ -242,7 +298,9 @@ function update(){
     if(delta>5)delta=5;
     if(delta<=0)return;
 
+
     currentThrottle = parseInt(rangeInput.value);
+
 
     const activation_treshold = 30;
     /*if(STATES[0] !== STATES[1]) {
@@ -279,7 +337,6 @@ function update(){
     function disableNormalFu(){
         STATES[0]=true
         STATES[1]=false
-        STATES[2]=false
         SOUND_MANAGER.playSound({id: 'defu'});
         SOUND_MANAGER.stopSound('fu');
     }
@@ -381,7 +438,7 @@ function update(){
         SOUND_MANAGER.stopSound('80kmh')
     }
 
-    //FU
+    //FU LIGNE
     if(!STATES[1]){
         if(currentSpeed >=78 && currentThrottle===-6){
             SOUND_MANAGER.playSound({id: 'fu80'})
@@ -432,10 +489,17 @@ function update(){
             STATES[0]=false
             //console.log(STATES)
         }
-    } else if (currentThrottle >0) {
-        
     }
-    
+
+    //ACCELERATIONS
+    if(currentThrottle >0 && STATES[0] && !STATES[2]){
+
+        SOUND_MANAGER.playSound({id: 'accel080', trim: trimTreshold, pitch: pitchOffset, prespitch: true})
+        STATES[2]=true
+    } else if (currentThrottle<=0){
+        SOUND_MANAGER.stopSound('accel080')
+        STATES[2]=false
+    }
     
 
     /*const activation_treshold = 12;
