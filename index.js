@@ -196,6 +196,7 @@ SOUND_MANAGER.context = new AudioContext();
     SOUND_MANAGER.registerSound("fu3", 'sounds/fu/fu3.mp3');
 
     SOUND_MANAGER.registerSound("accel", 'sounds/accels-deccels/accel-0-80.mp3')
+    SOUND_MANAGER.registerSound("decel", 'sounds/accels-deccels/decel-0-80.mp3')
 
     SOUND_MANAGER.registerSound("5kmh", 'sounds/steady/3kmh.mp3')
     SOUND_MANAGER.registerSound("10kmh", 'sounds/steady/10kmh.mp3')
@@ -210,8 +211,6 @@ SOUND_MANAGER.context = new AudioContext();
     SOUND_MANAGER.registerSound("70kmh", 'sounds/steady/70kmh-steady.mp3')
     SOUND_MANAGER.registerSound("80kmh", 'sounds/steady/80kmh-steady.mp3')
 
-    SOUND_MANAGER.registerSound("accel080", 'sounds/accels-deccels/accel-0-80.mp3')
-
     SOUND_MANAGER.registerSound("doorsOpen", 'sounds/portes/ouverture-portes.mp3')
     SOUND_MANAGER.registerSound("doorsClose", 'sounds/portes/fermeture-portes.mp3')
     SOUND_MANAGER.registerSound("ronfleur", 'sounds/portes/ronfleur.mp3')
@@ -222,11 +221,12 @@ SOUND_MANAGER.context = new AudioContext();
 let openBtn = document.getElementById('open');
 let closeBtn = document.getElementById('close');
 let fuBtn = document.getElementById('fu');
+let stopBtn = document.getElementById('stop');
 
 
 
 
-const STATES = [false, false, false, false] //DEFU ; FU ; ACCEL
+const STATES = [false, false, false, false] //DEFU ; FU ; ACCEL; -ACCEL
 let currentSpeed = 0;
 let currentThrottle = 0;
 let throttleDisplay = document.querySelector("#throttle-status");
@@ -273,6 +273,77 @@ function instantFu(){
     rangeInput.value=-6
 }
 
+function stopSounds(types){
+    switch(types){
+        case 'fu':
+            SOUND_MANAGER.stopSound('fu80')
+            SOUND_MANAGER.stopSound('fu70')
+            SOUND_MANAGER.stopSound('fu60')
+            SOUND_MANAGER.stopSound('fu50')
+            SOUND_MANAGER.stopSound('fu30')
+            SOUND_MANAGER.stopSound('fu20')
+            SOUND_MANAGER.stopSound('fu3')
+            break;
+        case 'motors':
+            SOUND_MANAGER.stopSound('decel080')
+            SOUND_MANAGER.stopSound('accel080')
+            break;
+        case '*':
+            SOUND_MANAGER.stopSound('fu80')
+            SOUND_MANAGER.stopSound('fu70')
+            SOUND_MANAGER.stopSound('fu60')
+            SOUND_MANAGER.stopSound('fu50')
+            SOUND_MANAGER.stopSound('fu30')
+            SOUND_MANAGER.stopSound('fu20')
+            SOUND_MANAGER.stopSound('fu3')
+            SOUND_MANAGER.stopSound('decel')
+            SOUND_MANAGER.stopSound('accel')
+            SOUND_MANAGER.stopSound('defu')
+            SOUND_MANAGER.stopSound('fu')
+            SOUND_MANAGER.stopSound('fu80')
+            SOUND_MANAGER.stopSound('fu70')
+            SOUND_MANAGER.stopSound('fu60')
+            SOUND_MANAGER.stopSound('fu50')
+            SOUND_MANAGER.stopSound('fu30')
+            SOUND_MANAGER.stopSound('fu20')
+            SOUND_MANAGER.stopSound('fu3')
+            SOUND_MANAGER.stopSound('5kmh')
+            SOUND_MANAGER.stopSound('10kmh')
+            SOUND_MANAGER.stopSound('15kmh')
+            SOUND_MANAGER.stopSound('20kmh')
+            SOUND_MANAGER.stopSound('30kmh')
+            SOUND_MANAGER.stopSound('40kmh')
+            SOUND_MANAGER.stopSound('45kmh')
+            SOUND_MANAGER.stopSound('50kmh')
+            SOUND_MANAGER.stopSound('55kmh')
+            SOUND_MANAGER.stopSound('60kmh')
+            SOUND_MANAGER.stopSound('70kmh')
+            SOUND_MANAGER.stopSound('80kmh')
+            SOUND_MANAGER.stopSound('decel080')
+            SOUND_MANAGER.stopSound('accel080')
+            SOUND_MANAGER.stopSound('doorsOpen')
+            SOUND_MANAGER.stopSound('doorsClose')
+            SOUND_MANAGER.stopSound('ronfleur')
+            SOUND_MANAGER.stopSound('verr')
+            break;
+        case 'steady':
+            SOUND_MANAGER.stopSound('5kmh')
+            SOUND_MANAGER.stopSound('10kmh')
+            SOUND_MANAGER.stopSound('15kmh')
+            SOUND_MANAGER.stopSound('20kmh')
+            SOUND_MANAGER.stopSound('30kmh')
+            SOUND_MANAGER.stopSound('40kmh')
+            SOUND_MANAGER.stopSound('45kmh')
+            SOUND_MANAGER.stopSound('50kmh')
+            SOUND_MANAGER.stopSound('55kmh')
+            SOUND_MANAGER.stopSound('60kmh')
+            SOUND_MANAGER.stopSound('70kmh')
+            SOUND_MANAGER.stopSound('80kmh')
+            break;
+    }
+
+}
+
 up()
 
 function up(){
@@ -285,9 +356,10 @@ function update(){
     openBtn.addEventListener('click', openDoors)
     closeBtn.addEventListener('click', closeDoors)
     fuBtn.addEventListener('click', instantFu)
+    stopBtn.addEventListener('click', ()=>{ stopSounds('*') })
 
 
-    pitchOffset = currentThrottle/5
+    
     trimTreshold=(currentSpeed/maxSpeed)*21
     console.log(currentThrottle)
     let rn = Date.now();
@@ -341,22 +413,12 @@ function update(){
         SOUND_MANAGER.stopSound('fu');
     }
 
-    function stopAllFu(){
-        SOUND_MANAGER.stopSound('fu80')
-        SOUND_MANAGER.stopSound('fu70')
-        SOUND_MANAGER.stopSound('fu60')
-        SOUND_MANAGER.stopSound('fu50')
-        SOUND_MANAGER.stopSound('fu30')
-        SOUND_MANAGER.stopSound('fu20')
-        SOUND_MANAGER.stopSound('fu3')
-    }
-
     //DEFU
     if(currentSpeed > 0 && currentThrottle > 0 && currentSpeed < 1 && !STATES[0]){
         disableNormalFu()
     } else if (currentSpeed > 0 && currentThrottle > 0 && STATES[1] && !STATES[0]){
         disableNormalFu()
-        stopAllFu()
+        stopSounds('fu')
     }
     //FU
     if(currentSpeed <= 0 && !STATES[1] && STATES[0] && currentThrottle < 0){
@@ -492,13 +554,25 @@ function update(){
     }
 
     //ACCELERATIONS
-    if(currentThrottle >0 && STATES[0] && !STATES[2]){
 
-        SOUND_MANAGER.playSound({id: 'accel080', trim: trimTreshold, pitch: pitchOffset, prespitch: true})
+
+    pitchOffset = currentThrottle/5
+
+    if(currentThrottle >0 && STATES[0] && !STATES[2]){
+        stopSounds('motors')
+        SOUND_MANAGER.playSound({id: 'accel', trim: trimTreshold, pitch: pitchOffset, prespitch: false})
+        console.log("1")
         STATES[2]=true
-    } else if (currentThrottle<=0){
-        SOUND_MANAGER.stopSound('accel080')
+        STATES[3]=false
+    } else if (currentThrottle<0 && !STATES[3]){
+        stopSounds('motors')
+        SOUND_MANAGER.playSound({id: 'decel', trim: trimTreshold, pitch: pitchOffset, prespitch: false})
         STATES[2]=false
+        STATES[3]=true
+    } else if (currentThrottle===-6){
+        stopSounds('motors')
+    } else if (currentThrottle===0){
+        stopSounds('motors')
     }
     
 
