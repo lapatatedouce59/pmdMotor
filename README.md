@@ -8,10 +8,10 @@ Le système détecte automatiquement la vitesse et lui applique un son propre.
 Les prochaines versions prévoient d'utiliser un son constant pitché au fur et à mesure.
 
 ### FEATURES:
-> 🟥 Sons d'accélérations selon les vitesses <br>
+> 🟨 Sons d'accélérations selon les vitesses <br>
 > 🟥 Sons d'accélération constant et linéaire (un seul sample pitché) <br>
 > 🟩 Sons de FU selon la vitesse <br>
-> 🟥 Sons de freinage selon la vitesse <br>
+> 🟨 Sons de freinage selon la vitesse <br>
 > 🟩 Sons de rame steady <br>
 
 URL de la page de test: https://pmdapp.fr/motor/

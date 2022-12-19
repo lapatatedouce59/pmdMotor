@@ -88,7 +88,7 @@ const SOUND_MANAGER = {
         }
 
         this.audios[params.id].push(src);
-        console.log("played "+params.id)
+        console.log("played "+params.id+ " trimmed "+(params.trim || 0) +" and pitched "+(params.pitch||0))
         return src;
     },
     /**
@@ -226,7 +226,7 @@ let stopBtn = document.getElementById('stop');
 
 
 
-const STATES = [false, false, false, false] //DEFU ; FU ; ACCEL; -ACCEL
+const STATES = [false, false, false, false] //DEFU ; FU ; ACCEL; DECEL
 let currentSpeed = 0;
 let currentThrottle = 0;
 let throttleDisplay = document.querySelector("#throttle-status");
@@ -283,10 +283,12 @@ function stopSounds(types){
             SOUND_MANAGER.stopSound('fu30')
             SOUND_MANAGER.stopSound('fu20')
             SOUND_MANAGER.stopSound('fu3')
+            console.log('Sons FU arrêtés')
             break;
         case 'motors':
             SOUND_MANAGER.stopSound('decel080')
             SOUND_MANAGER.stopSound('accel080')
+            console.log('Sons moteurs arrêtés')
             break;
         case '*':
             SOUND_MANAGER.stopSound('fu80')
@@ -325,6 +327,7 @@ function stopSounds(types){
             SOUND_MANAGER.stopSound('doorsClose')
             SOUND_MANAGER.stopSound('ronfleur')
             SOUND_MANAGER.stopSound('verr')
+            console.log('Sons arrêtés')
             break;
         case 'steady':
             SOUND_MANAGER.stopSound('5kmh')
@@ -339,6 +342,7 @@ function stopSounds(types){
             SOUND_MANAGER.stopSound('60kmh')
             SOUND_MANAGER.stopSound('70kmh')
             SOUND_MANAGER.stopSound('80kmh')
+            console.log('Sons constants arrêtés')
             break;
     }
 
@@ -361,7 +365,7 @@ function update(){
 
     
     trimTreshold=(currentSpeed/maxSpeed)*21
-    console.log(currentThrottle)
+    //console.log(currentThrottle)
     let rn = Date.now();
     let inter = rn - lastUpdate;
     let theorical_inter = 1000.0 / max_tps;
@@ -555,24 +559,47 @@ function update(){
 
     //ACCELERATIONS
 
+    async function motor(type){
+        switch(type){
+            case 'accel':
+                await stopSounds('steady')
+                await SOUND_MANAGER.stopSound('decel')
+                SOUND_MANAGER.playSound({id: 'accel', trim: trimTreshold/*, pitch: pitchOffset, prespitch: false*/})
+                STATES[2]=true
+                STATES[3]=false
+                break;
+            case 'decel':
+                await stopSounds('steady')
+                await SOUND_MANAGER.stopSound('accel')
+                SOUND_MANAGER.playSound({id: 'decel', trim: trimTreshold/*, pitch: pitchOffset, prespitch: false*/})
+                STATES[2]=false
+                STATES[3]=true
+                break;
+            case 'neutral':
+                await SOUND_MANAGER.stopSound('decel')
+                await SOUND_MANAGER.stopSound('accel')
+                STATES[2]=false
+                STATES[3]=false
+                break;
+        }
+        console.log("Mode de sons "+type+" appliqué.")
+
+    }
+
 
     pitchOffset = currentThrottle/5
 
     if(currentThrottle >0 && STATES[0] && !STATES[2]){
-        stopSounds('motors')
-        SOUND_MANAGER.playSound({id: 'accel', trim: trimTreshold, pitch: pitchOffset, prespitch: false})
-        console.log("1")
-        STATES[2]=true
-        STATES[3]=false
-    } else if (currentThrottle<0 && !STATES[3]){
-        stopSounds('motors')
-        SOUND_MANAGER.playSound({id: 'decel', trim: trimTreshold, pitch: pitchOffset, prespitch: false})
-        STATES[2]=false
-        STATES[3]=true
-    } else if (currentThrottle===-6){
-        stopSounds('motors')
-    } else if (currentThrottle===0){
-        stopSounds('motors')
+        //console.log('accel')
+        motor('accel')
+    } 
+    if (currentThrottle<0 && !STATES[3]){
+        //console.log('decel')
+        motor('decel')
+    }
+    if(currentThrottle===0){
+        //console.log('neutral')
+        motor('neutral')
     }
     
 
