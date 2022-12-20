@@ -348,6 +348,11 @@ function stopSounds(types){
 
 }
 
+openBtn.addEventListener('click', openDoors)
+closeBtn.addEventListener('click', closeDoors)
+fuBtn.addEventListener('click', instantFu)
+stopBtn.addEventListener('click', ()=>{ stopSounds('*') })
+
 up()
 
 function up(){
@@ -357,10 +362,6 @@ function up(){
 
 
 function update(){
-    openBtn.addEventListener('click', openDoors)
-    closeBtn.addEventListener('click', closeDoors)
-    fuBtn.addEventListener('click', instantFu)
-    stopBtn.addEventListener('click', ()=>{ stopSounds('*') })
 
 
     
