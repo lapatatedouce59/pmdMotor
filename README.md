@@ -1,6 +1,6 @@
 # PMD Motor System
 
-<img src="https://img.shields.io/badge/version-bêta%201-informational">
+<img src="https://img.shields.io/badge/version-bêta%202-informational">
 
 ### Nouvelle version de moteur de sons de trains sur [Paris Metro Driver](https://metrodriver.ddns.net)
 
@@ -11,8 +11,8 @@ Les prochaines versions prévoient d'utiliser un son constant pitché au fur et 
 
 ### FEATURES:
 > 🟩 Sons d'accélérations selon les vitesses <br>
-> 🟥 Sons d'accélération constant et linéaire (pitch de samples) <br>
-> 🟥 Hacheur synthétique constant <br>
+> 🟩 Sons d'accélération constant et linéaire (pitch de samples) <br>
+> 🟩 Hacheur synthétique constant <br>
 > 🟩 Sons de FU selon la vitesse <br>
 > 🟩 Sons de freinage selon la vitesse <br>
 > 🟩 Sons de rame steady <br>

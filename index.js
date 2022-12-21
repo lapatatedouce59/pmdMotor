@@ -218,6 +218,7 @@ SOUND_MANAGER.context = new AudioContext();
 
     SOUND_MANAGER.registerSound('withEee', 'sounds/steady/withEeee.mp3')
     SOUND_MANAGER.registerSound('withoutEee', 'sounds/steady/withoutEeee.mp3')
+    SOUND_MANAGER.registerSound('hacheur', 'sounds/steady/hacheur-typique.mp3')
     requestAnimationFrame(up);
 })();
 
@@ -240,6 +241,9 @@ let lastUpdate = Date.now();
 let max_tps = 50.0;
 const maxSpeed = 80;
 let trimTreshold = 0
+let reverseTrimTreshold = 0
+let volumeDecr=0
+let volumeIncr=0
 let pitchOffset = 0
 let doorsState = false
 let closingState= false
@@ -291,6 +295,9 @@ function stopSounds(types){
         case 'motors':
             SOUND_MANAGER.stopSound('decel080')
             SOUND_MANAGER.stopSound('accel080')
+            SOUND_MANAGER.stopSound('withEee')
+            SOUND_MANAGER.stopSound('withoutEee')
+            SOUND_MANAGER.stopSound('hacheur')
             console.log('Sons moteurs arrêtés')
             break;
         case '*':
@@ -330,6 +337,9 @@ function stopSounds(types){
             SOUND_MANAGER.stopSound('doorsClose')
             SOUND_MANAGER.stopSound('ronfleur')
             SOUND_MANAGER.stopSound('verr')
+            SOUND_MANAGER.stopSound('withEee')
+            SOUND_MANAGER.stopSound('withoutEee')
+            SOUND_MANAGER.stopSound('hacheur')
             console.log('Sons arrêtés')
             break;
         case 'steady':
@@ -371,6 +381,7 @@ function update(){
     trimTreshold=(currentSpeed/maxSpeed)*21
     reverseTrimTreshold=21-trimTreshold
 
+
     let rn = Date.now();
     let inter = rn - lastUpdate;
     let theorical_inter = 1000.0 / max_tps;
@@ -383,7 +394,7 @@ function update(){
     currentThrottle = parseInt(rangeInput.value);
 
 
-    const activation_treshold = 30;
+    const activation_treshold = 35;
     /*if(STATES[0] !== STATES[1]) {
         if(currentThrottle>0)currentSpeed = activation_treshold+.01;
         else currentSpeed = activation_treshold-.01;
@@ -468,7 +479,7 @@ function update(){
         SOUND_MANAGER.stopSound('30kmh')
     }
 
-    if(currentSpeed >35 && currentSpeed <=42 && currentThrottle===0){
+    /*if(currentSpeed >35 && currentSpeed <=42 && currentThrottle===0){
         SOUND_MANAGER.loopSound('40kmh')
     } else {
         SOUND_MANAGER.stopSound('40kmh')
@@ -508,7 +519,7 @@ function update(){
         SOUND_MANAGER.loopSound('80kmh')
     } else {
         SOUND_MANAGER.stopSound('80kmh')
-    }
+    }*/
 
     //FU LIGNE
     if(!STATES[1] && STATES[0] &&currentThrottle===-6){
@@ -560,7 +571,7 @@ function update(){
             case 'decel':
                 await stopSounds('steady')
                 await SOUND_MANAGER.stopSound('accel')
-                SOUND_MANAGER.playSound({id: 'decel', trim: reverseTrimTreshold/*, pitch: pitchOffset, prespitch: false*/})
+                SOUND_MANAGER.playSound({id: 'decel', trim: reverseTrimTreshold+0.7/*, pitch: pitchOffset, prespitch: false*/})
                 STATES[2]=false
                 STATES[3]=true
                 break;
@@ -583,16 +594,36 @@ function update(){
 
     pitchOffset = currentThrottle/5
 
-    if(currentThrottle >0 && !STATES[2]){
-        motor('accel')
-    } 
-    if (currentThrottle<0 && !STATES[3] && currentThrottle!=-6){
-        motor('decel')
-    }
-    if(currentThrottle===0){
-        motor('neutral')
+    if(currentSpeed<activation_treshold){
+        if(currentThrottle >0 && !STATES[2]){
+            motor('accel')
+        } 
+        if (currentThrottle<0 && !STATES[3] && currentThrottle!=-6){
+            motor('decel')
+        }
+        if(currentThrottle===0){
+            motor('neutral')
+        }
+    } else {
+        motor('fu')
     }
     
+
+    if(currentSpeed>activation_treshold && STATES[2]){
+        let motor_level_speed = (currentSpeed-activation_treshold); //VITESSE DU MOTEUR PITCHABLE DEPUIS 35KMH > RENVOIE 1KMH SI 36KMH ECT
+        let max_margin = maxSpeed -  activation_treshold; //ZONE DE VITESSE PITCHABLE (=45, CONST)
+        let speed_of_max = (motor_level_speed / max_margin);
+
+        volumeDecr=1.4-speed_of_max*0.8
+        //let starter = Math.min(motor_level_speed/(activation_treshold/2),1);
+        SOUND_MANAGER.loopSound('withEee', volumeDecr, 1 + Math.min(1.4, (1.3 * speed_of_max)));
+        SOUND_MANAGER.loopSound('hacheur', 0.3);
+        SOUND_MANAGER.loopSound('withoutEee', 0.7, 1 + Math.min(1.4, (1.3 * speed_of_max)));
+    }else{
+        SOUND_MANAGER.stopSound('withEee');
+        SOUND_MANAGER.stopSound('withoutEee');
+        SOUND_MANAGER.stopSound('hacheur');
+    }
 
     /*const activation_treshold = 12;
     if(STATES[0] !== STATES[1]) {
