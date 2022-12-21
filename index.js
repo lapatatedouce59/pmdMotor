@@ -215,6 +215,9 @@ SOUND_MANAGER.context = new AudioContext();
     SOUND_MANAGER.registerSound("doorsClose", 'sounds/portes/fermeture-portes.mp3')
     SOUND_MANAGER.registerSound("ronfleur", 'sounds/portes/ronfleur.mp3')
     SOUND_MANAGER.registerSound("verr", 'sounds/portes/verouilleur.mp3')
+
+    SOUND_MANAGER.registerSound('withEee', 'sounds/steady/withEeee.mp3')
+    SOUND_MANAGER.registerSound('withoutEee', 'sounds/steady/withoutEeee.mp3')
     requestAnimationFrame(up);
 })();
 
@@ -366,7 +369,8 @@ function update(){
 
     
     trimTreshold=(currentSpeed/maxSpeed)*21
-    //console.log(currentThrottle)
+    reverseTrimTreshold=21-trimTreshold
+
     let rn = Date.now();
     let inter = rn - lastUpdate;
     let theorical_inter = 1000.0 / max_tps;
@@ -395,7 +399,7 @@ function update(){
         speedDisplay.innerHTML = currentSpeed.toFixed(1);
     } else {
         throttleDisplay.innerHTML = currentThrottle;
-        currentSpeed += ((currentThrottle / 50) * delta);
+        currentSpeed += ((currentThrottle / 54) * delta);
         if(currentSpeed > maxSpeed) currentSpeed = maxSpeed;
         if(currentSpeed < 0) currentSpeed = 0;
         speedDisplay.innerHTML = currentSpeed.toFixed(1);
@@ -427,6 +431,8 @@ function update(){
     //FU
     if(currentSpeed <= 0 && !STATES[1] && STATES[0] && currentThrottle < 0){
         applyNormalFu()
+        SOUND_MANAGER.stopSound('decel')
+        SOUND_MANAGER.stopSound('accel')
     }
 
 
@@ -554,7 +560,7 @@ function update(){
             case 'decel':
                 await stopSounds('steady')
                 await SOUND_MANAGER.stopSound('accel')
-                SOUND_MANAGER.playSound({id: 'decel', trim: trimTreshold/*, pitch: pitchOffset, prespitch: false*/})
+                SOUND_MANAGER.playSound({id: 'decel', trim: reverseTrimTreshold/*, pitch: pitchOffset, prespitch: false*/})
                 STATES[2]=false
                 STATES[3]=true
                 break;
@@ -578,15 +584,12 @@ function update(){
     pitchOffset = currentThrottle/5
 
     if(currentThrottle >0 && !STATES[2]){
-        //console.log('accel')
         motor('accel')
     } 
     if (currentThrottle<0 && !STATES[3] && currentThrottle!=-6){
-        //console.log('decel')
         motor('decel')
     }
     if(currentThrottle===0){
-        //console.log('neutral')
         motor('neutral')
     }
     
